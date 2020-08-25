@@ -1,0 +1,218 @@
+<div class="m-width mb-5">
+    <div class="container mat-elevation-z8" style="padding: 0;">
+      <mat-table [dataSource]="DataSource">
+        <!--- Note that these columns can be defined in any order.
+                    The actual rendered columns are set as a property on the row definition" -->
+        <!-- Header -->
+        <ng-container matColumnDef="title">
+            <mat-header-cell
+                *matHeaderCellDef
+                style="justify-content: center;font-size: large;"
+                colspan="0"
+            >
+                C&B TEAM
+            </mat-header-cell>
+        </ng-container>
+        
+        <!-- Serial no -->
+        
+        <!-- *Checkbox Column -->
+        <ng-container matColumnDef="select">
+          <mat-header-cell *matHeaderCellDef style="padding: 0px !important;"
+            >
+            <mat-checkbox
+            style="color:cornsilk"
+            matTooltip="Select All"
+            (change)="$event ? selectAll() : null"
+            [checked]="selection.hasValue() && isAllSelected()"
+             [indeterminate]="selection.hasValue() && !isAllSelected()"
+            color="warn"
+          >
+          </mat-checkbox>
+            </mat-header-cell
+          >
+        <mat-cell *matCellDef="let row" style="padding: 0px !important;">
+          <mat-checkbox
+            (click)="$event.stopPropagation()"
+            (change)="$event ? selection.toggle(row) : null"
+            [checked]="selection.isSelected(row)"
+            color="warn"
+          >
+          </mat-checkbox>
+        </mat-cell>
+      </ng-container>
+        <!-- Employee code Column -->
+        <ng-container matColumnDef="ecode">
+          <mat-header-cell *matHeaderCellDef>EMPLOYEE CODE</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{
+            element.Pernr 
+          }}</mat-cell>
+        </ng-container>
+        
+        <ng-container matColumnDef="awardtype">
+            <mat-header-cell *matHeaderCellDef>AWARD TYPE</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{
+              element.AwardType 
+            }}</mat-cell>
+          </ng-container>
+
+        <!-- Employee name Column -->
+        <ng-container matColumnDef="ename">
+          <mat-header-cell *matHeaderCellDef>EMPLOYEE NAME</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{
+            element.EmpName 
+          }}</mat-cell>
+        </ng-container>
+  
+        <!-- Mobile Number -->
+        <ng-container matColumnDef="certMobile">
+          <mat-header-cell *matHeaderCellDef>CERTIFIED MOBILE</mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{ element.MobileNumber }}
+          </mat-cell>
+        </ng-container>
+  
+        <!--* STATUS -->
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef>STATUS</mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{ element.Status }}
+          </mat-cell>
+        </ng-container>
+        <!-- Amount -->
+        <ng-container matColumnDef="amount">
+          <mat-header-cell *matHeaderCellDef>AMOUNT</mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{ element.RewardAmount }}
+          </mat-cell>
+        </ng-container>
+  
+        <!-- Reason  -->
+        <ng-container matColumnDef="reason">
+          <mat-header-cell *matHeaderCellDef class="text-center">
+            REASON FOR REJECTION
+          </mat-header-cell>
+          <!-- <td [ngClass]="{ status: status }" mat-cell *matCellDef="let element"> -->
+          <mat-cell matTooltip="click to enter" *matCellDef="let element;let i = index">
+            <mat-form-field style="width: 100%;" floatLabel="never">
+              <input maxlength="100" [(ngModel)]="reasons[element.no]" matInput placeholder="Enter reason..." >
+            </mat-form-field>
+              <!-- <input style="width: 100%;" matInput placeholder="Enter reason ..."> -->
+          </mat-cell>
+        </ng-container>
+  
+       
+  
+        <!-- *This container is for loading mat-footer-row -->
+        <ng-container matColumnDef="loading">
+          <mat-footer-cell
+            style="
+            justify-content: center;
+            font-style: italic;
+            font-weight: 550;
+            color: rgb(46, 46, 161); "
+            *matFooterCellDef
+            colspan="0"
+          >
+           <span #loading> Loading data ...</span>
+          </mat-footer-cell>
+        </ng-container>
+        <!-- *This container is for loading mat-footer-row -->
+        <ng-container matColumnDef="noData">
+          <mat-footer-cell
+            *matFooterCellDef
+            style="justify-content: center; font-style: italic;"
+            colspan="0"
+          >
+            No data
+          </mat-footer-cell>
+        </ng-container>
+        
+        
+        <mat-header-row class="title" style="min-height: 40px;" *matHeaderRowDef="['title']"></mat-header-row>
+        <mat-header-row *matHeaderRowDef="DisplayedColumns"></mat-header-row>
+        <mat-row
+          class="text-center"
+          *matRowDef="let row; columns: DisplayedColumns"
+        ></mat-row>
+        
+        <!-- *For Loading And no data -->
+
+        <mat-footer-row
+          *matFooterRowDef="['loading']"
+          [ngClass]="{ hide: DataSource != null }"
+        ></mat-footer-row>
+        <mat-footer-row
+          *matFooterRowDef="['noData']"
+          [ngClass]="{
+            hide: !(
+                DataSource != null && DataSource?.data?.length === 0
+            )
+          }"
+        ></mat-footer-row>
+      </mat-table>
+      <!-- <mat-paginator
+        [pageSizeOptions]="[5, 10, 20]"
+        showFirstLastButtons
+      ></mat-paginator> -->
+    </div>
+  </div>
+
+  <!--* THe buttons in the footer section  -->
+<mat-toolbar class="footer">
+  <span class="fill-remaining-space"></span>
+  <span class="fill-remaining-space"></span>
+  <span>
+    <!-- <button
+      mat-raised-button
+      type="button"
+      [ngClass]="{
+        button1: true
+      }"
+      style="width: 120px;"
+      (click)="selectAll()"
+    >
+      <span *ngIf="!(selection.hasValue() && isAllSelected())">
+        Select All
+      </span>
+      <span *ngIf="selection.hasValue() && isAllSelected()">
+        Unselect All
+      </span>
+    </button> -->
+    <a class="button1 ml-2" mat-raised-button href="/sap/opu/odata/sap/ZLSA_SPA_SRV/DownloadExcelSet(Actor='CNB')/$value" style="height: 30px;">Download Excel</a> 
+    <button
+      mat-raised-button
+      type="button"
+      [ngClass]="{
+        button1: true,
+        'ml-2': true,
+        btnDisabled: '!selection.hasValue()'
+      }"
+      [disabled]="!selection.hasValue()"
+      (click)="openDialog(true)"
+      color="primary"
+      style="width: 100px; height: 30px;"
+    >
+      Approve
+    </button>
+    <button
+      mat-raised-button
+      type="button"
+      [ngClass]="{
+        button1: true,
+        'ml-2': true,
+        btnDisabled: '!selection.hasValue()'
+      }"
+      [disabled]="!selection.hasValue()"
+      (click)="verifyReasons()"
+      color="warn"
+      style="width: 100px; height: 30px;"
+    >
+      Reject
+    </button>
+  </span>
+</mat-toolbar>
+
+
+
+<!-- [disabled]="selection.hasValue() && !selection.isSelected(row)" -->
